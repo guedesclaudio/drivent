@@ -6,14 +6,14 @@ import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
 import { ViaCEPAddress } from "@/protocols.js";
 
-async function getAddressFromCEP(cep: string) { 
+async function getAddressFromCEP(cep: string): Promise<ViaCEPAddress> { 
   const result = (await request.get(`https://viacep.com.br/ws/${cep}/json/`)).data;
   
   if (!result) {
     throw notFoundError();
   }
   result["cidade"] = result["localidade"];
-  return exclude(result, "ibge", "gia", "ddd", "siafi", "cep", "localidade");
+  return exclude(result, "ibge", "gia", "ddd", "siafi", "cep", "localidade") as ViaCEPAddress;
 }
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
