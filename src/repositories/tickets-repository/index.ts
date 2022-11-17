@@ -5,15 +5,20 @@ async function findTicketsTypesToEvent() {
 }
 
 async function findTicketsToEvent() {
-  return prisma.ticket.findMany();
+  return prisma.ticket.findFirst();
 }
 
 async function createTicketToEvent(ticketTypeId: number) {
-  return prisma.ticket.upsert({
-    where: {
-      ticketTypeId,
-    },
-  });
+  /*const Ticket = await prisma.ticket.create({
+    data: {
+      ticketTypeId
+    }
+  })*/
+
+  /*
+  return prisma.ticket.findUnique({
+    where: {ticketTypeId}
+  });*/
 }
 
 const ticketsRepository = {

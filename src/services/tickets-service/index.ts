@@ -8,11 +8,32 @@ async function getTicketsTypesToEvent() {
 }
 
 async function getTicketsToEvent() {
-  const result = await ticketsRepository.findTicketsToEvent();
+  const ticket = await ticketsRepository.findTicketsToEvent();
+  const ticketType = (await ticketsRepository.findTicketsTypesToEvent())[0];
 
-  if (!result) {
-    throw notFoundError();
-  }
+  const {
+    createdAt,
+    id,
+    includesHotel,
+    isRemote,
+    name,
+    price,
+    updatedAt
+  } = ticketType;
+
+  const result = {
+    ...ticket,
+    TicketType: {
+      createdAt,
+      id,
+      includesHotel,
+      isRemote,
+      name,
+      price,
+      updatedAt
+    }
+  };
+
   return result;
 }
 

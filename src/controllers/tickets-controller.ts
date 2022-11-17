@@ -16,6 +16,11 @@ export async function getTicketsTypes(req: AuthenticatedRequest, res: Response) 
 export async function getTickets(req: AuthenticatedRequest, res: Response) {
   try {
     const tickets = await ticketsService.getTicketsToEvent();
+
+    if (!tickets.enrollmentId) {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+
     return res.status(httpStatus.OK).send(tickets);
   } catch (error) {
     return res.sendStatus(httpStatus.NOT_FOUND); //verificar se ta correto
