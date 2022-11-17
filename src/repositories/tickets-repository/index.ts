@@ -1,5 +1,4 @@
 import { prisma } from "@/config";
-import { Enrollment } from "@prisma/client";
 
 async function findTicketsTypesToEvent() {
   return prisma.ticketType.findMany();
@@ -10,7 +9,11 @@ async function findTicketsToEvent() {
 }
 
 async function createTicketToEvent(ticketTypeId: number) {
-  //return prisma.ti
+  return prisma.ticket.upsert({
+    where: {
+      ticketTypeId,
+    },
+  });
 }
 
 const ticketsRepository = {
