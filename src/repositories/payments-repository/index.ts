@@ -1,6 +1,5 @@
 import { prisma } from "@/config";
 import { PaymentProcess } from "@/protocols";
-import { Enrollment } from "@prisma/client";
 
 async function findPaymentById(ticketId: number) {
   return prisma.payment.findFirst({
@@ -18,19 +17,44 @@ async function findTicketById(ticketId: number) {
   });
 }
 
-async function createPayment(payment: PaymentProcess) {
-  /*return prisma.payment.create({
+async function createPayment(payment: PaymentProcess, ticketTypeId: number) {
+  const value = (await prisma.ticketType.findUnique({
+    where: { id: ticketTypeId }
+  })).price;
+
+  return prisma.payment.create({
     data: {
       ticketId: payment.ticketId,
       cardIssuer: payment.cardData.issuer, 
-      cardLastDigits: payment.cardData.number
+      cardLastDigits: payment.cardData.number,
+      value
     }
-  });*/
+  });
+}
+
+async function updateTicket(ticketId: number) {
+  return prisma.ticket.update({
+    where: {
+      id: ticketId
+    },
+    data: {
+      status: "PAID"
+    }
+  });
+}
+
+async function findEnrollmenteByUserId(userId: number) {
+  return prisma.enrollment.findUnique({
+    where: { userId }
+  });
 }
 
 const paymentsRepository = {
   findPaymentById,
-  findTicketById
+  findTicketById,
+  createPayment,
+  updateTicket,
+  findEnrollmenteByUserId
 };
 
 export default paymentsRepository;

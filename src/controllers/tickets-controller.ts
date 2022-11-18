@@ -29,15 +29,22 @@ export async function getTickets(req: AuthenticatedRequest, res: Response) {
 
 export async function postTicket(req: AuthenticatedRequest, res: Response) {
   const { ticketTypeId } = req.body;
+  const { userId } = req;
 
   if (!ticketTypeId) {
     return res.sendStatus(httpStatus.BAD_REQUEST); // verificar se ta correto
   }
 
   try {
-    await ticketsService.postTicketToEvent(Number(ticketTypeId));
+    const enrollment = await ticketsService.getEnrollmentByUserId(Number(userId));
 
-    //return res.status(httpStatus.CREATED).send(tickets)
+    if (!enrollment) {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+
+    const ticket = await ticketsService.postTicketToEvent(Number(ticketTypeId), Number(enrollment.id));
+
+    return res.status(httpStatus.CREATED).send(ticket);
   } catch (error) {
     return res.sendStatus(httpStatus.NOT_FOUND); //verificar se ta correto
   }
