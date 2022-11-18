@@ -4,8 +4,11 @@ async function findTicketsTypesToEvent() {
   return prisma.ticketType.findMany();
 }
 
-async function findTicketsToEvent() {
-  return prisma.ticket.findFirst();
+async function findTicketsToEvent(enrollmentId: number) {
+  return prisma.ticket.findFirst({
+    where: { enrollmentId },
+    include: { TicketType: true }
+  }); 
 }
 
 async function findEnrollmentByUserId(userId: number) {
@@ -17,19 +20,14 @@ async function findEnrollmentByUserId(userId: number) {
 }
 
 async function createTicketToEvent(ticketTypeId: number, enrollmentId: number) {
-  const ticket = await prisma.ticket.create({
+  return prisma.ticket.create({
     data: {
       ticketTypeId,
       enrollmentId,
       status: "RESERVED"
-    }
+    },
+    include: { TicketType: true }
   });
-
-  const ticketType = await prisma.ticketType.findUnique({
-    where: { id: ticketTypeId }
-  });
-  
-  return { ticket, ticketType };
 }
 
 const ticketsRepository = {

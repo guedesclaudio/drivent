@@ -25,7 +25,7 @@ async function postPayment(payment: PaymentProcess) {
 }
 
 async function getEnrollmentByUserId(userId: number) {
-  return paymentsRepository.findEnrollmenteByUserId(userId);
+  return paymentsRepository.findEnrollmentByUserId(userId);
 }
 
 const paymentsService = {
