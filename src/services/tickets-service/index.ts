@@ -1,71 +1,33 @@
+import { notFoundError } from "@/errors";
 import ticketsRepository from "@/repositories/tickets-repository";
+import { Enrollment, Ticket, TicketType } from "@prisma/client";
 
-async function getTicketsTypesToEvent() {
-  const result = await ticketsRepository.findTicketsTypesToEvent();
-
-  return result;
+async function getTicketsTypesToEvent(): Promise<TicketType[]> {
+  return ticketsRepository.findTicketsTypesToEvent();
 }
 
-async function getTicketsToEvent() {
-  const ticket = await ticketsRepository.findTicketsToEvent();
-  const ticketType = (await ticketsRepository.findTicketsTypesToEvent())[0];
+async function getTicketsToEvent(userId: number): Promise<Ticket> {
+  const enrollmentId = (await getEnrollmentByUserId(Number(userId))).id; 
+  const ticket = await ticketsRepository.findTicketsToEvent(enrollmentId);
 
-  const {
-    createdAt,
-    id,
-    includesHotel,
-    isRemote,
-    name,
-    price,
-    updatedAt
-  } = ticketType;
+  if (!ticket.enrollmentId) {
+    throw notFoundError();
+  }
 
-  const result = {
-    ...ticket,
-    TicketType: {
-      createdAt,
-      id,
-      includesHotel,
-      isRemote,
-      name,
-      price,
-      updatedAt
-    }
-  };
-
-  return result;
+  return ticket;
 }
 
-async function postTicketToEvent(ticketTypeId: number, enrollmentId: number) {
-  const { ticket, ticketType } = await ticketsRepository.createTicketToEvent(ticketTypeId, enrollmentId);
+async function postTicketToEvent(ticketTypeId: number, userId: number) {
+  const enrollment = await getEnrollmentByUserId(userId);
 
-  const {
-    createdAt,
-    id,
-    includesHotel,
-    isRemote,
-    name,
-    price,
-    updatedAt
-  } = ticketType;
+  if (!enrollment) {
+    throw notFoundError();
+  }
 
-  const result = {
-    ...ticket,
-    TicketType: {
-      createdAt,
-      id,
-      includesHotel,
-      isRemote,
-      name,
-      price,
-      updatedAt
-    }
-  };
-
-  return result;
+  return ticketsRepository.createTicketToEvent(ticketTypeId, enrollment.id);
 }
 
-async function getEnrollmentByUserId(userId: number) {
+async function getEnrollmentByUserId(userId: number): Promise<Enrollment> {
   return ticketsRepository.findEnrollmentByUserId(userId);
 }
 
