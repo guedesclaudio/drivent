@@ -43,18 +43,11 @@ async function updateTicket(ticketId: number) {
   });
 }
 
-async function findEnrollmentByUserId(userId: number) { //duplicada no tickets repository
-  return prisma.enrollment.findUnique({
-    where: { userId }
-  });
-}
-
 const paymentsRepository = {
   findPaymentById,
   findTicketById,
   createPayment,
-  updateTicket,
-  findEnrollmentByUserId
+  updateTicket
 };
 
 export default paymentsRepository;

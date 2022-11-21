@@ -34,7 +34,8 @@ async function getEnrollmentByUserId(userId: number): Promise<Enrollment> {
 const ticketsService = {
   getTicketsTypesToEvent,
   getTicketsToEvent,
-  postTicketToEvent
+  postTicketToEvent,
+  getEnrollmentByUserId
 };
 
 export default ticketsService;

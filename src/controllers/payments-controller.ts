@@ -2,20 +2,17 @@ import { AuthenticatedRequest } from "@/middlewares";
 import { Response } from "express";
 import httpStatus from "http-status";
 import paymentsService from "@/services/payments-service";
+import ticketsService from "@/services/tickets-service";
 import { PaymentProcess } from "@/protocols";
 
 export async function getPayments(req: AuthenticatedRequest, res: Response) {
   const { ticketId } = req.query;
 
-  if (!ticketId) {
-    return res.sendStatus(httpStatus.BAD_REQUEST); //verificar
-  }
-
   try {
     const ticket = await paymentsService.getTicketById(Number(ticketId));
 
     if (!ticket) {
-      return res.sendStatus(httpStatus.NOT_FOUND);
+      return res.sendStatus(httpStatus.NOT_FOUND); 
     }
 
     const payment = await paymentsService.getPaymentById(Number(ticketId));
@@ -34,12 +31,8 @@ export async function postPayment(req: AuthenticatedRequest, res: Response) {
   const payment = req.body as PaymentProcess;
   const { userId } = req;
 
-  if (!payment.cardData || !payment.ticketId) {
-    return res.sendStatus(httpStatus.BAD_REQUEST);
-  }
-
   try {
-    const enrollment = await paymentsService.getEnrollmentByUserId(Number(userId));
+    const enrollment = await ticketsService.getEnrollmentByUserId(Number(userId));
     const ticket = await paymentsService.getTicketById(Number(payment.ticketId));
 
     if (!ticket) {
