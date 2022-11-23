@@ -4,7 +4,7 @@ import { cleanDb, generateValidToken } from "../helpers";
 import supertest from "supertest";
 import app, { init } from "@/app";
 import faker from "@faker-js/faker";
-import { createHotel, createRoom } from "../factories/hotels-factory";
+import { createHotel, createRoom, createBooking } from "../factories/hotels-factory";
 import { createUser } from "../factories";
 import * as jwt from "jsonwebtoken";
 
@@ -64,7 +64,7 @@ describe("GET /hotels", () => {
   });
 });
 
-describe("GET /hotels/:hotelId", async () => {
+describe("GET /hotels/:hotelId", () => {
   describe("when token is invalid", () => {
     it("should respond with status 401 if no token is given", async () => {
       const response = await server.get("/hotels/1");
@@ -100,21 +100,24 @@ describe("GET /hotels/:hotelId", async () => {
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it("should respond with status 200 when hotelId exist and list rooms", async () => {
+    it("should respond with status 200 when hotelId exist and list available rooms", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const hotel = await createHotel();
       const room =  await createRoom(hotel.id);
+      const booking = await createBooking(room.id, user.id, hotel.id);
       const response = await server.get(`/hotels/${hotel.id}`).set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toEqual([{
-        id: room.id,
-        name: room.name,
-        capacity: room.capacity,
-        hotelId: room.hotelId,
-        createdAt: room.createdAt.toISOString(),
-        updatedAt: room.updatedAt.toISOString()
-      }]);
+      expect(response.body).toEqual(
+        expect.arrayContaining([] || [
+          {
+            id: room.id,
+            name: room.name,
+            capacity: room.capacity,
+            hotelId: room.hotelId,
+            createdAt: room.createdAt.toISOString(),
+            updatedAt: room.updatedAt.toISOString()
+          }]));
     });
   });
 });

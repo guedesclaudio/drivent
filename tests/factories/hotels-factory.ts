@@ -13,10 +13,20 @@ export async function createHotel(): Promise<Hotel> {
 
 export async function createRoom(hotelId: number): Promise<Room> {
   return prisma.room.create({
-    data: {
+    data: 
+    {
       name: faker.name.findName(),
       capacity: faker.datatype.number(),
-      hotelId,
+      hotelId  
+    }
+  });
+}
+
+export async function createBooking(roomId: number, userId: number, hotelId: number) {
+  return prisma.booking.create({
+    data: {
+      userId,
+      roomId
     }
   });
 }

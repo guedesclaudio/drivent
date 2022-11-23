@@ -13,7 +13,23 @@ async function getRoomsPerHotelById(hotelId: number): Promise<Room[]> {
     throw notFoundError();
   }
 
-  return hotelsRepository.findRoomsPerHotelById(hotelId);
+  const rooms =  await hotelsRepository.findRoomsPerHotelById(hotelId);
+  const bookings = await hotelsRepository.findBookings();
+  const availableRooms: Room[] = [];
+
+  if (bookings.length === 0) {
+    return rooms;
+  }
+
+  rooms.map(value => {
+    bookings.filter(element => {
+      if (value.id !== element.roomId) {
+        availableRooms.push(value);
+      }
+    });
+  });
+
+  return availableRooms;
 }
 
 const hotelsService = {

@@ -10,6 +10,10 @@ async function findRoomsPerHotelById(hotelId: number) {
   });
 }
 
+async function findBookings() {
+  return prisma.booking.findMany();
+}
+
 async function findHotelById(hotelId: number) {
   return prisma.hotel.findUnique({
     where: { id: hotelId }
@@ -19,7 +23,8 @@ async function findHotelById(hotelId: number) {
 const hotelsRepository = {
   findHotels,
   findRoomsPerHotelById,
-  findHotelById
+  findHotelById,
+  findBookings
 };
 
 export default hotelsRepository;
