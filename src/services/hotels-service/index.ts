@@ -1,13 +1,14 @@
 import { notFoundError } from "@/errors";
 import hotelsRepository from "@/repositories/hotels-repository";
+import paymentsRepository from "@/repositories/payments-repository";
 import ticketsRepository from "@/repositories/tickets-repository";
 import { Hotel, Room, TicketStatus } from "@prisma/client";
 
-async function getHotels(userId: number): Promise<Hotel[] | []> {
+async function getHotels(userId: number): Promise<Hotel[]> {
   const conditionsIsValid  = await verifyEnrollmentAndTicketByUserId(userId);
 
   if (!conditionsIsValid) {
-    return [];
+    throw notFoundError();
   }
 
   return hotelsRepository.findHotels();
@@ -17,7 +18,7 @@ async function getRoomsPerHotelById(hotelId: number, userId: number): Promise<Ro
   const conditionsIsValid = await verifyEnrollmentAndTicketByUserId(userId);
 
   if (!conditionsIsValid) {
-    return false;
+    throw notFoundError();
   }
 
   const hotel = await hotelsRepository.findHotelById(hotelId);
@@ -43,8 +44,6 @@ async function verifyEnrollmentAndTicketByUserId(userId: number): Promise<boolea
   }
   
   const ticketType = await ticketsRepository.findTiketTypeById(ticket.ticketTypeId);
-
-  //verificar se tem um payment com o tickeId
 
   if (ticketType.includesHotel === false || ticketType.isRemote === true) {
     return false;
