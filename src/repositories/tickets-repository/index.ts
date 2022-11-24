@@ -30,11 +30,18 @@ async function createTicketToEvent(ticketTypeId: number, enrollmentId: number) {
   });
 }
 
+async function findTiketTypeById(ticketTypeId: number) {
+  return prisma.ticketType.findUnique({
+    where: { id: ticketTypeId }
+  });
+}
+
 const ticketsRepository = {
   findTicketsTypesToEvent,
   findTicketsToEvent,
   createTicketToEvent,
-  findEnrollmentByUserId
+  findEnrollmentByUserId,
+  findTiketTypeById
 };
 
 export default ticketsRepository;
