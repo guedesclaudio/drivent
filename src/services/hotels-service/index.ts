@@ -14,7 +14,7 @@ async function getHotels(userId: number): Promise<Hotel[]> {
   return hotelsRepository.findHotels();
 }
 
-async function getRoomsPerHotelById(hotelId: number, userId: number): Promise<Room[] | boolean> {
+async function getRoomsPerHotelById(hotelId: number, userId: number): Promise<Hotel & {Rooms: Room[]}> {
   const conditionsIsValid = await verifyEnrollmentAndTicketByUserId(userId);
 
   if (!conditionsIsValid) {
