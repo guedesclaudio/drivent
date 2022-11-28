@@ -160,35 +160,56 @@ describe("GET /hotels/:hotelId", () => {
     it("should respond with status 404 when user doesnt have an ticket yet", async () => {
       const user = await createUser();
       const token = await generateValidToken(); 
-      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       await createEnrollmentWithAddress(user);
       await createTicketTypeCorrect();
-      
+
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it("should respond with status 404 when user have an incorrect ticket", async () => {
       const user = await createUser();
       const token = await generateValidToken(); 
-      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketTypeIncorrect();
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
       await createPayment(ticket.id, ticketType.price);
       await updateTicket(ticket.id);
 
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it("should respond with status 404 when user doesnt have an payment yet", async () => {
       const user = await createUser();
       const token = await generateValidToken(); 
-      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketTypeCorrect();
       await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it("should respond with empty object when there are no Rooms created", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user); 
+      const hotel = await createHotel();
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketTypeCorrect();
+      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
+      await createPayment(ticket.id, ticketType.price);
+      await updateTicket(ticket.id);
+
+      const response = await server.get(`/hotels/${hotel.id}`).set("Authorization", `Bearer ${token}`);
+      expect(response.body).toEqual({
+        id: hotel.id,
+        image: hotel.image,
+        name: hotel.name,
+        createdAt: hotel.createdAt.toISOString(),
+        updatedAt: hotel.updatedAt.toISOString(),
+        Rooms: []
+      });
     });
 
     it("should respond with status 200 when hotelId exist and list available rooms", async () => {
@@ -204,20 +225,23 @@ describe("GET /hotels/:hotelId", () => {
 
       const response = await server.get(`/hotels/${hotel.id}`).set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toEqual([
-        {
-          id: room.id,
-          name: room.name,
-          capacity: room.capacity,
-          hotelId: room.hotelId,
-          createdAt: room.createdAt.toISOString(),
-          updatedAt: room.updatedAt.toISOString(),
-          Hotel: {
-            id: hotel.id,
-            name: hotel.name,
-            image: hotel.image
+      expect(response.body).toMatchObject({
+        id: hotel.id,
+        image: hotel.image,
+        name: hotel.name,
+        createdAt: hotel.createdAt.toISOString(),
+        updatedAt: hotel.updatedAt.toISOString(),
+        Rooms: [
+          {
+            id: room.id,
+            capacity: room.capacity,
+            hotelId: room.hotelId,
+            name: room.name,
+            createdAt: room.createdAt.toISOString(),
+            updatedAt: room.updatedAt.toISOString(),
           }
-        }]);
+        ]
+      });
     });
   });
 });

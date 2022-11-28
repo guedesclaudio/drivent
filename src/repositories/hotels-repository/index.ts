@@ -5,7 +5,7 @@ async function findHotels() {
 }
 
 async function findRoomsPerHotelById(hotelId: number) {
-  return prisma.room.findMany({
+  /*return prisma.room.findMany({
     where: { hotelId }, 
     include: { Hotel: {
       select: {
@@ -14,6 +14,11 @@ async function findRoomsPerHotelById(hotelId: number) {
         image: true
       }
     } } 
+  });*/
+
+  return prisma.hotel.findUnique({
+    where: { id: hotelId }, 
+    include: { Rooms: true } 
   });
 }
 
