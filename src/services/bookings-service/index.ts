@@ -8,12 +8,6 @@ import { ReadBooking } from "@/protocols";
 import { Room, Booking } from "@prisma/client";
 
 async function getBookingByUserId(userId: number) {
-  const conditionsIsValid = await verifyConditions(userId);
-  
-  if (!conditionsIsValid) {
-    throw notFoundError();
-  }
-
   const booking = await bookingsRepository.findBookingByUserId(userId);
 
   if (!booking) {
@@ -31,7 +25,7 @@ async function postBooking(userId: number, roomId: number) {
   }
 
   const roomIsCheck = await verifyRoomAndBooking(roomId);
-
+  
   if (roomIsCheck === "RoomNotFound") {
     throw notFoundError();
   }
@@ -50,7 +44,7 @@ async function updateBooking(bookingId: number, roomId: number, userId: number) 
   }
 
   const roomIsCheck = await verifyRoomAndBooking(roomId);
-
+  
   if (roomIsCheck === "RoomNotFound") {
     throw notFoundError();
   }
@@ -58,7 +52,7 @@ async function updateBooking(bookingId: number, roomId: number, userId: number) 
     throw forbiddenError();
   }
 
-  const booking = await bookingsRepository.findBookingByUserIdAndRoomId(userId, roomId);
+  const booking = await bookingsRepository.findBookingById(bookingId);
   
   if (!booking || booking.userId !== userId) {
     throw notFoundError();

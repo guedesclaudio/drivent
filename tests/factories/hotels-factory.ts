@@ -16,7 +16,7 @@ export async function createRoom(hotelId: number): Promise<Room> {
     data: 
     {
       name: faker.name.findName(),
-      capacity: faker.datatype.number(),
+      capacity: 1,
       hotelId  
     }
   });

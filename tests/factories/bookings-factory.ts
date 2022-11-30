@@ -21,3 +21,9 @@ export async function updateBookingWithRoomId(roomId: number, bookingId: number)
     data: { roomId }
   });
 }
+
+export async function findBookingUpdated(roomId: number) {
+  return prisma.booking.findFirst({
+    where: { roomId }
+  });
+}

@@ -38,7 +38,7 @@ export async function changeBooking(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const { bookingId } = req.params;
   const { roomId } = req.body;
-
+  
   if (!bookingId || !roomId) {
     return res.sendStatus(httpStatus.BAD_REQUEST); //TODO - verificar 
   }
