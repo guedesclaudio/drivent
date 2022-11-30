@@ -12,7 +12,8 @@ async function insertBooking(userId: number, roomId: number) {
     data: {
       userId,
       roomId
-    }
+    },
+    select: { id: true }
   });
 }
 
@@ -21,14 +22,36 @@ async function putBooking(bookingId: number, roomId: number) {
     where: { id: bookingId },
     data: {
       roomId
-    }
+    },
+    select: { id: true }
+  });
+}
+
+async function findRoomById(roomId: number) {
+  return prisma.room.findUnique({
+    where: { id: roomId }
+  });
+}
+
+async function findBookingsByRoomId(roomId: number) {
+  return prisma.booking.findMany({
+    where: { roomId }
+  });
+}
+
+async function findBookingByUserIdAndRoomId(userId: number, roomId: number) {
+  return prisma.booking.findFirst({
+    where: { userId }
   });
 }
 
 const bookingsRepository = {
   findBookingByUserId,
   insertBooking,
-  putBooking
+  putBooking,
+  findRoomById,
+  findBookingsByRoomId,
+  findBookingByUserIdAndRoomId
 };
 
 export default bookingsRepository;

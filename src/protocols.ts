@@ -40,3 +40,15 @@ export type PaymentProcess = {
     cvv: number
   }
 }
+
+export type ReadBooking = {
+  id: number,
+  Room: {
+    id: number,
+    capacity: number,
+    hotelId: number,
+    name: number,
+    createdAt: Date,
+    updatedAt: Date,
+  }
+}

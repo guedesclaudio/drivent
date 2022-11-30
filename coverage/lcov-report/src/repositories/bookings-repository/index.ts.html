@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/repositories/payments-repository/index.ts</title>
+    <title>Code coverage report for src/repositories/bookings-repository/index.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/repositories/payments-repository</a> index.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/repositories/bookings-repository</a> index.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -39,7 +39,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -113,11 +113,7 @@
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a>
-<a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -127,20 +123,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -150,18 +133,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -170,58 +164,55 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { prisma } from "@/config";
-import { PaymentProcess } from "@/protocols";
 &nbsp;
-async function findPaymentById(ticketId: number) {
-  return prisma.payment.findFirst({
-    where: { 
-      ticketId 
-    },
+async function findBookingByUserId(userId: number) {
+  return prisma.booking.findFirst({
+    where: { userId },
+    include: { Room: true }
   });
 }
 &nbsp;
-async function findTicketById(ticketId: number) {
-  return prisma.ticket.findFirst({
-    where: { 
-      id: ticketId
-    },
-  });
-}
-&nbsp;
-async function createPayment(payment: PaymentProcess, ticketTypeId: number) {
-  const value = (await prisma.ticketType.findUnique({
-    where: { id: ticketTypeId }
-  })).price;
-&nbsp;
-  return prisma.payment.create({
+async function insertBooking(userId: number, roomId: number) {
+  return prisma.booking.create({
     data: {
-      ticketId: payment.ticketId,
-      cardIssuer: payment.cardData.issuer, 
-      cardLastDigits: payment.cardData.number,
-      value
-    }
-  });
-}
-&nbsp;
-async function updateTicket(ticketId: number) {
-  return prisma.ticket.update({
-    where: {
-      id: ticketId
+      userId,
+      roomId
     },
-    data: {
-      status: "PAID"
-    }
+    select: { id: true }
   });
 }
 &nbsp;
-const paymentsRepository = {
-  findPaymentById,
-  findTicketById,
-  createPayment,
-  updateTicket
+async function putBooking(bookingId: number, roomId: number) {
+  return prisma.booking.update({
+    where: { id: bookingId },
+    data: {
+      roomId
+    },
+    select: {id: true }
+  });
+}
+&nbsp;
+async function findRoomById(roomId: number) {
+  return prisma.room.findUnique({
+    where: { id: roomId }
+  });
+}
+&nbsp;
+async function findBookingsByRoomId(roomId: number) {
+  return prisma.booking.findMany({
+    where: { roomId }
+  });
+}
+&nbsp;
+const bookingsRepository = {
+  findBookingByUserId,
+  insertBooking,
+  putBooking,
+  findRoomById,
+  findBookingsByRoomId
 };
 &nbsp;
-export default paymentsRepository;
+export default bookingsRepository;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

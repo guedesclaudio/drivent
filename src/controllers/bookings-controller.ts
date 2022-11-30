@@ -26,7 +26,11 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
     const booking = await bookingsService.postBooking(Number(userId), Number(roomId));
     return res.status(httpStatus.OK).send(booking);
   } catch (error) {
-    return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.name === "NotFoundError") {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+
+    return res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
 
@@ -40,9 +44,13 @@ export async function changeBooking(req: AuthenticatedRequest, res: Response) {
   }
 
   try {
-    const booking = await bookingsService.postBooking(Number(bookingId), Number(roomId)); //TODO - talvez deva passar o userId tambem
+    const booking = await bookingsService.updateBooking(Number(bookingId), Number(roomId), Number(userId)); //TODO - talvez deva passar o userId tambem
     return res.status(httpStatus.OK).send(booking);
   } catch (error) {
-    return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.name === "NotFoundError") {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+
+    return res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
