@@ -6,7 +6,7 @@ const bookingsRouter = Router();
 
 bookingsRouter
   .all("/*", authenticateToken)
-  .get("/")
+  .get("/", listBooking)
   .post("/")
   .put("/");
 
