@@ -3,14 +3,11 @@ import { notFoundError } from "@/errors";
 import ticketsRepository from "@/repositories/tickets-repository";
 import { TicketStatus } from "@prisma/client";
 import { exclude } from "@/utils/prisma-utils";
+import { forbiddenError } from "@/errors/forbidden-error";
+import { ReadBooking } from "@/protocols";
+import { Room, Booking } from "@prisma/client";
 
 async function getBookingByUserId(userId: number) {
-  const conditionsIsValid = await verifyConditions(userId);
-  
-  if (!conditionsIsValid) {
-    throw notFoundError();
-  }
-
   const booking = await bookingsRepository.findBookingByUserId(userId);
 
   if (!booking) {
@@ -21,17 +18,47 @@ async function getBookingByUserId(userId: number) {
 }
 
 async function postBooking(userId: number, roomId: number) {
-  return bookingsRepository.insertBooking(userId, roomId);
+  const conditionsIsValid = await verifyConditions(userId);
+  
+  if (!conditionsIsValid) {
+    throw notFoundError();
+  }
 
-  //TODO - verificar se o roomId existe -> 404
-  //TODO - verificar se tem vaga nesse roomId -> 403
+  const roomIsCheck = await verifyRoomAndBooking(roomId);
+  
+  if (roomIsCheck === "RoomNotFound") {
+    throw notFoundError();
+  }
+  if (roomIsCheck === "RoomIsFull") {
+    throw forbiddenError();
+  }
+
+  return bookingsRepository.insertBooking(userId, roomId);
 }
 
-async function updateBooking(bookingId: number, roomId: number) {
-  return bookingsRepository.putBooking(bookingId, roomId);
+async function updateBooking(bookingId: number, roomId: number, userId: number) {
+  const conditionsIsValid = await verifyConditions(userId);
+  
+  if (!conditionsIsValid) {
+    throw notFoundError();
+  }
 
-  //TODO - verificar se o roomId existe -> 404
-  //TODO - verificar se tem vaga nesse roomId -> 403
+  const roomIsCheck = await verifyRoomAndBooking(roomId);
+  
+  if (roomIsCheck === "RoomNotFound") {
+    throw notFoundError();
+  }
+  if (roomIsCheck === "RoomIsFull") {
+    throw forbiddenError();
+  }
+
+  const booking = await bookingsRepository.findBookingById(bookingId);
+  
+  if (!booking || booking.userId !== userId) {
+    throw notFoundError();
+  }
+
+  return bookingsRepository.putBooking(bookingId, roomId);
 }
 
 async function verifyConditions(userId: number): Promise<boolean> {
@@ -53,6 +80,23 @@ async function verifyConditions(userId: number): Promise<boolean> {
     return false;
   }
   
+  return true;
+}
+
+async function verifyRoomAndBooking(roomId: number): Promise<string | boolean> {
+  const room = await bookingsRepository.findRoomById(roomId);
+
+  if (!room) {
+    return "RoomNotFound";
+  }
+
+  const { capacity } = room;
+  const amountBookings = (await bookingsRepository.findBookingsByRoomId(roomId)).length;
+
+  if (capacity === amountBookings) {
+    return "RoomIsFull";
+  }
+
   return true;
 }
 
