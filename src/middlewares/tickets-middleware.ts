@@ -1,6 +1,5 @@
 import { AuthenticatedRequest } from "@/middlewares";
 import { NextFunction, Response } from "express";
-import { tickeTypeIdSchema } from "@/schemas/tickets-schemas";
 import httpStatus from "http-status";
 
 export function validateBodyTicketType(req: AuthenticatedRequest, res: Response, next: NextFunction) {

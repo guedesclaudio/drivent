@@ -1,3 +1,5 @@
+import { Room, Booking } from "@prisma/client";
+
 export type ApplicationError = {
   name: string;
   message: string;
@@ -39,16 +41,10 @@ export type PaymentProcess = {
     expirationDate: Date,
     cvv: number
   }
-}
+};
 
-export type ReadBooking = {
-  id: number,
-  Room: {
-    id: number,
-    capacity: number,
-    hotelId: number,
-    name: number,
-    createdAt: Date,
-    updatedAt: Date,
-  }
-}
+export type ReadBooking = Omit<Booking & {Room: Room}, "userId" | "createdAt" | "updatedAt" | "roomId">;
+
+export type BookingId = {
+  id: number
+};

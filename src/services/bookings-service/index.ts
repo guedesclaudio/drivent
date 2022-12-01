@@ -4,10 +4,9 @@ import ticketsRepository from "@/repositories/tickets-repository";
 import { TicketStatus } from "@prisma/client";
 import { exclude } from "@/utils/prisma-utils";
 import { forbiddenError } from "@/errors/forbidden-error";
-import { ReadBooking } from "@/protocols";
-import { Room, Booking } from "@prisma/client";
+import { ReadBooking, BookingId } from "@/protocols";
 
-async function getBookingByUserId(userId: number) {
+async function getBookingByUserId(userId: number): Promise<ReadBooking> {
   const booking = await bookingsRepository.findBookingByUserId(userId);
 
   if (!booking) {
@@ -17,11 +16,17 @@ async function getBookingByUserId(userId: number) {
   return exclude(booking, "createdAt", "updatedAt", "roomId", "userId");
 }
 
-async function postBooking(userId: number, roomId: number) {
+async function postBooking(userId: number, roomId: number): Promise<BookingId> {
   const conditionsIsValid = await verifyConditions(userId);
   
   if (!conditionsIsValid) {
     throw notFoundError();
+  }
+  
+  const userHasBooking = await bookingsRepository.findBookingByUserId(userId);
+  
+  if(userHasBooking) {
+    throw forbiddenError();
   }
 
   const roomIsCheck = await verifyRoomAndBooking(roomId);
@@ -32,11 +37,11 @@ async function postBooking(userId: number, roomId: number) {
   if (roomIsCheck === "RoomIsFull") {
     throw forbiddenError();
   }
-
+  
   return bookingsRepository.insertBooking(userId, roomId);
 }
 
-async function updateBooking(bookingId: number, roomId: number, userId: number) {
+async function updateBooking(bookingId: number, roomId: number, userId: number): Promise<BookingId> {
   const conditionsIsValid = await verifyConditions(userId);
   
   if (!conditionsIsValid) {
