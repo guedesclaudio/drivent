@@ -129,6 +129,14 @@ describe("POST /booking", () => {
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
 
+    it("should respond with status 400 if body roomId is not a number", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+    
+      const response = await server.post("/booking").set("Authorization", `Bearer ${token}`).send({ roomId: "a" });
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
     it("should respond with status 404 when user doesnt have an enrollment yet", async () => {
       const token = await generateValidToken(); 
       const hotel = await createHotel();
@@ -292,6 +300,28 @@ describe("UPDATE /booking", () => {
       const booking = await createBookingWithUserId(user.id, room.id);
 
       const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`);
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 if body roomId is not a number", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotel();
+      const room = await createRoom(hotel.id);
+      const booking = await createBookingWithUserId(user.id, room.id);
+
+      const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send({ roomId: "a" });
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 if bookinId is not a number", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotel();
+      const room = await createRoom(hotel.id);
+      const booking = await createBookingWithUserId(user.id, room.id);
+
+      const response = await server.put("/booking/a").set("Authorization", `Bearer ${token}`).send({ roomId: room.id });
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
 
