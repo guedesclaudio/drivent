@@ -18,8 +18,8 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   const { roomId } = req.body;
 
-  if (!roomId || Number(roomId) < 1) {
-    return res.sendStatus(httpStatus.BAD_REQUEST); //TODO - verificar 
+  if (!roomId || Number(roomId) < 1 || isNaN(roomId)) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 
   try {
@@ -39,12 +39,13 @@ export async function changeBooking(req: AuthenticatedRequest, res: Response) {
   const { bookingId } = req.params;
   const { roomId } = req.body;
   
-  if (!bookingId || !roomId || Number(bookingId) < 1 || Number(roomId) < 1) {
-    return res.sendStatus(httpStatus.BAD_REQUEST); //TODO - verificar 
+  if (!bookingId || !roomId || Number(bookingId) < 1 
+      || Number(roomId) < 1 || isNaN(roomId) || isNaN(Number(bookingId))) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 
   try {
-    const booking = await bookingsService.updateBooking(Number(bookingId), Number(roomId), Number(userId)); //TODO - talvez deva passar o userId tambem
+    const booking = await bookingsService.updateBooking(Number(bookingId), Number(roomId), Number(userId));
     return res.status(httpStatus.OK).send(booking);
   } catch (error) {
     if (error.name === "NotFoundError") {
