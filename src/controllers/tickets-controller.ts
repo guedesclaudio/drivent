@@ -8,7 +8,7 @@ export async function getTicketsTypes(req: AuthenticatedRequest, res: Response) 
     const ticketsTypes = await ticketsService.getTicketsTypesToEvent();
     return res.status(httpStatus.OK).send(ticketsTypes);
   } catch (error) {
-    return res.sendStatus(httpStatus.NO_CONTENT); //verificar se ta correto
+    return res.sendStatus(httpStatus.NO_CONTENT);
   }
 }
 
@@ -19,7 +19,7 @@ export async function getTickets(req: AuthenticatedRequest, res: Response) {
     const ticket = await ticketsService.getTicketsToEvent(Number(userId));
     return res.status(httpStatus.OK).send(ticket);
   } catch (error) {
-    return res.sendStatus(httpStatus.NOT_FOUND); //verificar se ta correto
+    return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
 
@@ -31,6 +31,6 @@ export async function postTicket(req: AuthenticatedRequest, res: Response) {
     const ticket = await ticketsService.postTicketToEvent(Number(ticketTypeId), Number(userId));
     return res.status(httpStatus.CREATED).send(ticket);
   } catch (error) {
-    return res.sendStatus(httpStatus.NOT_FOUND); //verificar se ta correto
+    return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }

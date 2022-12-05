@@ -23,7 +23,7 @@ export async function getPayments(req: AuthenticatedRequest, res: Response) {
         
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
-    return res.sendStatus(httpStatus.UNAUTHORIZED); //VERIFICAR
+    return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
 
@@ -46,6 +46,6 @@ export async function postPayment(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(result);
   } catch (error) {
-    return res.sendStatus(httpStatus.UNAUTHORIZED); //VERIFICAR
+    return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
